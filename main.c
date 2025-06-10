@@ -2,7 +2,7 @@
 
 void	exit_error(char *msg)
 {
-	printf(msg);
+	printf("%s", msg);
 	exit(1);
 }
 

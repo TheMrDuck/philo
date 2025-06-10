@@ -1,5 +1,7 @@
 #include "philo.h"
 
+
+
 int	ft_atoi(const char *nptr)
 {
 	int	c;
@@ -48,15 +50,15 @@ void	initializer(char ** av, t_philo *philos, pthread_mutex_t *forks)
 	while (i < philos_info.num_of_philos)
 	{
 		pthread_mutex_init(&forks[i], NULL);
-		philos[i].id = i;
+		philos[i].id = i + 1;
 		philos[i].is_alive = 1;
 		philos[i].last_meal = -1;
 		philos[i].info = &philos_info;
-		philos[i].r_fork = forks[i];
+		philos[i].r_fork = &forks[i];
 		if (i == 0)
-			philos[i].l_fork = forks[philos_info.num_of_philos];
+			philos[i].l_fork = &forks[philos_info.num_of_philos];
 		else
-			philos[i].l_fork = forks[i - 1];
+			philos[i].l_fork = &forks[i - 1];
 		i++;
 	}
 }

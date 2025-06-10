@@ -6,7 +6,7 @@
 /*   By: aswedan <aswedan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 14:15:02 by aswedan           #+#    #+#             */
-/*   Updated: 2025/06/10 14:48:45 by aswedan          ###   ########.fr       */
+/*   Updated: 2025/06/10 15:17:03 by aswedan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ typedef struct s_philo
 	int				is_alive;
 	pthread_t		thread;
 	t_info*			info;
-	pthread_mutex_t	r_fork;
-	pthread_mutex_t	l_fork;
+	pthread_mutex_t	*r_fork;
+	pthread_mutex_t	*l_fork;
 }	t_philo;
 
 void	initializer(char ** av, t_philo *philos, pthread_mutex_t *forks);

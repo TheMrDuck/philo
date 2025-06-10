@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philos_routine.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aswedan <aswedan@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/10 15:50:11 by aswedan           #+#    #+#             */
+/*   Updated: 2025/06/10 16:16:35 by aswedan          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 void	is_eating(t_philo	*philo)
@@ -6,21 +18,21 @@ void	is_eating(t_philo	*philo)
 		exit_error("Left fork lock failed!\n");
 	if (pthread_mutex_lock(philo->r_fork) != 0)
 		exit_error("Right fork lock failed!\n");
-	printf("%d is eating...\n", philo->id);
-	usleep(philo->info->time_to_eat);
+	printf("{%zu} %d is eating...\n", (get_timestamp() - philo->info->timestamp), philo->id);
+	ft_sleep(philo->info->time_to_eat);
 	pthread_mutex_unlock(philo->l_fork);
 	pthread_mutex_unlock(philo->r_fork);
 }
 
 void	is_thinking(t_philo *philo)
 {
-	printf("%d is thinking...\n", philo->id);
+	printf("{%zu} %d is thinking...\n", (get_timestamp() - philo->info->timestamp), philo->id);
 }
 
 void	is_sleeping(t_philo *philo)
 {
-	printf("%d is sleeping...\n", philo->id);
-	usleep(philo->info->time_to_sleep);
+	printf("{%zu} %d is sleeping...\n", (get_timestamp() - philo->info->timestamp), philo->id);
+	ft_sleep(philo->info->time_to_sleep);
 }
 
 void	*routine(void *arg)
@@ -31,8 +43,7 @@ void	*routine(void *arg)
 	eaten_meals = 0;
 	local_philo = (t_philo*) arg;
 	if (local_philo -> id % 2 == 0)
-		usleep(1000);
-	//printf("%d of meals\n", local_philo->info->num_of_meals);
+		ft_sleep(1000);
 	while (local_philo->is_alive && (eaten_meals++ < local_philo->info->num_of_meals
 		&& local_philo->info->num_of_meals != -1))
 	{

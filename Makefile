@@ -1,4 +1,4 @@
-SRC = main.c philos_routine.c utils.c
+SRC = main.c philos_routine.c utils.c timer.c
 OBJ = $(SRC:.c=.o)
 CC = cc -Wall -Wextra -Werror
 CFLAGS = -g -fsanitize=address -pthread

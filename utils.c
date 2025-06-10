@@ -1,6 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aswedan <aswedan@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/10 15:50:19 by aswedan           #+#    #+#             */
+/*   Updated: 2025/06/10 16:15:33 by aswedan          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
-
-
 
 int	ft_atoi(const char *nptr)
 {
@@ -33,6 +43,7 @@ static t_info	init_info(char **av)
 	rtn.time_to_die = ft_atoi(av[2]);
 	rtn.time_to_eat = ft_atoi(av[3]);
 	rtn.time_to_sleep = ft_atoi(av[4]);
+	rtn.timestamp = get_timestamp();
 	if (av[5])
 		rtn.num_of_meals = ft_atoi(av[5]);
 	else

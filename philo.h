@@ -6,7 +6,7 @@
 /*   By: aswedan <aswedan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 14:15:02 by aswedan           #+#    #+#             */
-/*   Updated: 2025/05/21 18:14:16 by aswedan          ###   ########.fr       */
+/*   Updated: 2025/06/10 14:48:45 by aswedan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@
 # include <stdlib.h>
 # include <sys/time.h>
 # define PHILO_MAX 200
-typedef struct s_av_to_struct
+typedef struct s_info
 {
 	int	time_to_die;
 	int	time_to_eat;
 	int	time_to_sleep;
 	int	num_of_meals;
 	int	num_of_philos;
-}	t_av_to_struct;
+}	t_info;
 
 typedef struct s_philo
 {
@@ -33,10 +33,13 @@ typedef struct s_philo
 	int				last_meal;
 	int				is_alive;
 	pthread_t		thread;
-	t_av_to_struct*	av_to_struct;
+	t_info*			info;
 	pthread_mutex_t	r_fork;
 	pthread_mutex_t	l_fork;
 }	t_philo;
 
 void	initializer(char ** av, t_philo *philos, pthread_mutex_t *forks);
+void	exit_error(char *msg);
+void	*routine(void *arg);
+void create_threads (t_philo *philo, t_info *info);
 #endif

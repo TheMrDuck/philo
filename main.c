@@ -15,6 +15,6 @@ int main(int ac, char **av)
 		exit_error("Wrong number of arguments\n");
 	//initialization
 	initializer(av, philos, forks);
-
-
+	create_threads(philos, philos->info);
 }
+

@@ -6,7 +6,7 @@
 /*   By: aswedan <aswedan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 15:50:19 by aswedan           #+#    #+#             */
-/*   Updated: 2025/06/26 15:45:10 by aswedan          ###   ########.fr       */
+/*   Updated: 2025/06/26 15:58:15 by aswedan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void	create_threads(t_philo *philos, t_info *info)
     i = 0;
 	if (info->num_of_philos == 1)
 	{
-		ft_usleep(info->time_to_die);
+		ft_usleep(info->time_to_die, philos);
 		printf("%d %d died\n", info->time_to_die, 1);
 		return;
 	}

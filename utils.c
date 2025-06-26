@@ -6,7 +6,7 @@
 /*   By: aswedan <aswedan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 15:50:19 by aswedan           #+#    #+#             */
-/*   Updated: 2025/06/26 15:58:15 by aswedan          ###   ########.fr       */
+/*   Updated: 2025/06/26 18:12:45 by aswedan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,11 @@ int	ft_atoi(const char *nptr)
 	}
 	return (r * n);
 }
+
 t_info	init_info(char **av)
 {
 	t_info	rtn;
+
 	rtn.num_of_philos = ft_atoi(av[1]);
 	rtn.time_to_die = ft_atoi(av[2]);
 	rtn.time_to_eat = ft_atoi(av[3]);
@@ -50,52 +52,49 @@ t_info	init_info(char **av)
 		rtn.num_of_meals = ft_atoi(av[5]);
 	else
 		rtn.num_of_meals = -1;
-	return(rtn);
+	return (rtn);
 }
 
-void	initializer(char **av, t_philo *philos, pthread_mutex_t *forks, t_info *philos_info)
+void	initializer(char **av, t_philo *philos, pthread_mutex_t *forks,
+		t_info *philos_info)
 {
-    int	i;
+	int	i;
 
-    *philos_info = init_info(av);
-
-    pthread_mutex_init(&philos_info->timing_mutex, NULL);
-
-    i = 0;
-    while (i < philos_info->num_of_philos)
-    {
-        pthread_mutex_init(&forks[i], NULL);
-        philos[i].id = i + 1;
-        philos[i].last_meal = philos_info->timestamp;
-        philos[i].num_of_meals_eaten = 0;
-        philos[i].info = philos_info;
-        philos[i].r_fork = &forks[i];
-        if (i == 0)
-            philos[i].l_fork = &forks[philos_info->num_of_philos - 1];
-        else
-            philos[i].l_fork = &forks[i - 1];
-        i++;
-    }
+	*philos_info = init_info(av);
+	pthread_mutex_init(&philos_info->timing_mutex, NULL);
+	i = 0;
+	while (i < philos_info->num_of_philos)
+	{
+		pthread_mutex_init(&forks[i], NULL);
+		philos[i].id = i + 1;
+		philos[i].last_meal = philos_info->timestamp;
+		philos[i].num_of_meals_eaten = 0;
+		philos[i].info = philos_info;
+		philos[i].r_fork = &forks[i];
+		if (i == 0)
+			philos[i].l_fork = &forks[philos_info->num_of_philos - 1];
+		else
+			philos[i].l_fork = &forks[i - 1];
+		i++;
+	}
 }
 
 void	create_threads(t_philo *philos, t_info *info)
 {
-    int i;
+	int	i;
 
-    i = 0;
+	i = 0;
 	if (info->num_of_philos == 1)
 	{
 		ft_usleep(info->time_to_die, philos);
 		printf("%d %d died\n", info->time_to_die, 1);
-		return;
+		return ;
 	}
-    while (i < info->num_of_philos)
-    {
-        if (pthread_create(&philos[i].thread, NULL, routine, &philos[i]) != 0)
-            exit_error("Thread creation failed\n");
-        i++;
-    }
-    death_monitor(philos);
-
-
+	while (i < info->num_of_philos)
+	{
+		if (pthread_create(&philos[i].thread, NULL, routine, &philos[i]) != 0)
+			return ;
+		i++;
+	}
+	death_monitor(philos);
 }

@@ -6,11 +6,24 @@
 /*   By: aswedan <aswedan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 15:49:59 by aswedan           #+#    #+#             */
-/*   Updated: 2025/06/26 14:23:33 by aswedan          ###   ########.fr       */
+/*   Updated: 2025/06/26 15:48:11 by aswedan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+
+int check_sim_flag(t_info *philos_info)
+{
+	pthread_mutex_lock(&philos_info->timing_mutex);
+	if (philos_info->simulation_flag == 0)
+	{
+  		pthread_mutex_unlock(&philos_info->timing_mutex);
+  		return (1);
+ 	}
+ pthread_mutex_unlock(&philos_info->timing_mutex);
+ return (0);
+}
 
 void	exit_error(char *msg)
 {
@@ -23,6 +36,8 @@ void	joining_threads(t_philo *philos, t_info *philos_info)
 	int	i;
 
 	i = 0;
+	if (philos->info->num_of_philos == 1)
+		return;
 	while (i < philos_info->num_of_philos)
 	{
 		pthread_join(philos[i].thread, NULL);

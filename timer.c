@@ -6,7 +6,7 @@
 /*   By: aswedan <aswedan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 15:49:49 by aswedan           #+#    #+#             */
-/*   Updated: 2025/06/10 16:18:23 by aswedan          ###   ########.fr       */
+/*   Updated: 2025/06/26 15:55:27 by aswedan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ int check_meals_completed(t_philo *philos, t_info *info)
 {
     int i;
     int completed_meals;
-    
-	
+
+
     completed_meals = 0;
     i = 0;
     if (info->num_of_meals == -1)
@@ -39,45 +39,54 @@ void death_monitor(t_philo *philos)
     size_t last_meal_time;
     int i;
     t_info *info;
-    
+
     info = philos[0].info;
-    
-    while (info->simulation_flag)
+
+    while (1)
     {
         i = 0;
-        while (i < info->num_of_philos && info->simulation_flag)
+        while (i < info->num_of_philos)
         {
             pthread_mutex_lock(&info->timing_mutex);
             current_time = get_timestamp();
             last_meal_time = philos[i].last_meal;
             if (current_time - last_meal_time > (size_t)info->time_to_die)
             {
-                philos[i].is_alive = 0;
+                info->meals_completed = 0;
                 info->simulation_flag = 0;
-                printf("%zu %d died\n", (current_time - info->timestamp), philos[i].id);
                 pthread_mutex_unlock(&info->timing_mutex);
-                return;
+                break ;
             }
             pthread_mutex_unlock(&info->timing_mutex);
             i++;
         }
+        if (check_sim_flag(info))
+            break ;
         if (check_meals_completed(philos, info))
         {
             pthread_mutex_lock(&info->timing_mutex);
             info->simulation_flag = 0;
+            info->meals_completed = 1;
             pthread_mutex_unlock(&info->timing_mutex);
             break;
         }
         usleep(1000);
     }
+    if (info->meals_completed == 0)
+    {
+        pthread_mutex_lock(&info->timing_mutex);
+        current_time = get_timestamp();
+        printf("%zu %d died\n", (current_time - info->timestamp), philos[i].id);
+        pthread_mutex_unlock(&info->timing_mutex);
+    }
 }
 
-void	ft_usleep(size_t milliseconds)
+void	ft_usleep(size_t milliseconds, t_philo *philos)
 {
     size_t start;
 
     start = get_timestamp();
-    while ((get_timestamp() - start) < milliseconds)
+    while ((get_timestamp() - start) < milliseconds && philos->info->simulation_flag)
         usleep(500);
 }
 

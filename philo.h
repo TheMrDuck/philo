@@ -6,7 +6,7 @@
 /*   By: aswedan <aswedan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 14:15:02 by aswedan           #+#    #+#             */
-/*   Updated: 2025/06/10 16:14:50 by aswedan          ###   ########.fr       */
+/*   Updated: 2025/06/26 15:56:03 by aswedan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef struct s_info
     int				num_of_meals;
     size_t			timestamp;
     int				simulation_flag;
+    int             meals_completed;
     pthread_mutex_t	timing_mutex;
 }	t_info;
 
@@ -53,6 +54,7 @@ void	create_threads(t_philo *philos, t_info *info);
 void	*routine(void *arg);
 size_t	get_timestamp(void);
 void	death_monitor(t_philo *philos);
-void	ft_usleep(size_t milliseconds);
+void	ft_usleep(size_t milliseconds, t_philo *philos);
+int check_sim_flag(t_info *philos_info);
 
 #endif

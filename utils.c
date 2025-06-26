@@ -6,7 +6,7 @@
 /*   By: aswedan <aswedan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 15:50:19 by aswedan           #+#    #+#             */
-/*   Updated: 2025/06/10 16:15:33 by aswedan          ###   ########.fr       */
+/*   Updated: 2025/06/26 15:45:10 by aswedan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ t_info	init_info(char **av)
 	rtn.time_to_sleep = ft_atoi(av[4]);
 	rtn.timestamp = get_timestamp();
 	rtn.simulation_flag = 1;
+	rtn.meals_completed = 0;
 	if (av[5])
 		rtn.num_of_meals = ft_atoi(av[5]);
 	else
@@ -55,17 +56,16 @@ t_info	init_info(char **av)
 void	initializer(char **av, t_philo *philos, pthread_mutex_t *forks, t_info *philos_info)
 {
     int	i;
-    
+
     *philos_info = init_info(av);
-    
+
     pthread_mutex_init(&philos_info->timing_mutex, NULL);
-    
+
     i = 0;
     while (i < philos_info->num_of_philos)
     {
         pthread_mutex_init(&forks[i], NULL);
         philos[i].id = i + 1;
-        philos[i].is_alive = 1;
         philos[i].last_meal = philos_info->timestamp;
         philos[i].num_of_meals_eaten = 0;
         philos[i].info = philos_info;
@@ -81,8 +81,14 @@ void	initializer(char **av, t_philo *philos, pthread_mutex_t *forks, t_info *phi
 void	create_threads(t_philo *philos, t_info *info)
 {
     int i;
-    
+
     i = 0;
+	if (info->num_of_philos == 1)
+	{
+		ft_usleep(info->time_to_die);
+		printf("%d %d died\n", info->time_to_die, 1);
+		return;
+	}
     while (i < info->num_of_philos)
     {
         if (pthread_create(&philos[i].thread, NULL, routine, &philos[i]) != 0)
@@ -90,4 +96,6 @@ void	create_threads(t_philo *philos, t_info *info)
         i++;
     }
     death_monitor(philos);
+
+
 }

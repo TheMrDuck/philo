@@ -6,11 +6,13 @@
 /*   By: aswedan <aswedan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 15:50:11 by aswedan           #+#    #+#             */
-/*   Updated: 2025/06/26 14:24:14 by aswedan          ###   ########.fr       */
+/*   Updated: 2025/06/26 15:56:47 by aswedan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+
 
 void is_eating(t_philo *philo)
 {
@@ -30,12 +32,12 @@ void is_eating(t_philo *philo)
     current_time = get_timestamp();
     if (philo->info->simulation_flag)
         printf("%zu %d has taken a fork\n", (current_time - philo->info->timestamp), philo->id);
-    if (philo->info->simulation_flag)
+    if (philo->info->simulation_flag && philo->num_of_meals_eaten < philo->info->num_of_meals)
         printf("%zu %d is eating\n", (current_time - philo->info->timestamp), philo->id);
     philo->last_meal = current_time;
     philo->num_of_meals_eaten++;
     pthread_mutex_unlock(&philo->info->timing_mutex);
-    ft_usleep(philo->info->time_to_eat);
+    ft_usleep(philo->info->time_to_eat, philo);
     pthread_mutex_unlock(philo->l_fork);
     pthread_mutex_unlock(philo->r_fork);
 }
@@ -50,7 +52,7 @@ void is_sleeping(t_philo *philo)
         printf("%zu %d is sleeping\n", (current_time - philo->info->timestamp), philo->id);
     pthread_mutex_unlock(&philo->info->timing_mutex);
 
-    ft_usleep(philo->info->time_to_sleep);
+    ft_usleep(philo->info->time_to_sleep, philo);
 }
 
 void is_thinking(t_philo *philo)
@@ -69,16 +71,13 @@ void	*routine(void *arg)
     t_philo *philo = (t_philo *)arg;
 
     if (philo->id % 2 == 0)
-        ft_usleep(philo->info->time_to_eat / 2);
+        ft_usleep(philo->info->time_to_eat / 2, philo);
 
-    while (philo->info->simulation_flag && philo->is_alive)
+    while (1)
     {
+        if (check_sim_flag(philo->info))
+            return (NULL);
         is_eating(philo);
-
-        if (philo->info->num_of_meals != -1 &&
-            philo->num_of_meals_eaten >= philo->info->num_of_meals)
-            break;
-
         is_sleeping(philo);
         is_thinking(philo);
     }

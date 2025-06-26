@@ -22,11 +22,35 @@ int main(int ac, char **av)
 {
 	t_philo philos[PHILO_MAX];
 	pthread_mutex_t forks[PHILO_MAX];
+	t_info *philos_info;
+	int i;
 
 	if (ac < 5 || ac > 6)
 		exit_error("Wrong number of arguments\n");
-	//initialization
-	initializer(av, philos, forks);
-	create_threads(philos, philos->info);
+	
+	philos_info = malloc(sizeof(t_info));
+	if (!philos_info)
+		exit_error("Memory allocation failed\n");
+	
+	initializer(av, philos, forks, philos_info);
+	create_threads(philos, philos_info);
+	
+	i = 0;
+	while (i < philos_info->num_of_philos)
+	{
+		pthread_join(philos[i].thread, NULL);
+		i++;
+	}
+	
+	i = 0;
+	while (i < philos_info->num_of_philos)
+	{
+		pthread_mutex_destroy(&forks[i]);
+		i++;
+	}
+	pthread_mutex_destroy(&philos_info->timing_mutex);
+	
+	free(philos_info);
+	return (0);
 }
 

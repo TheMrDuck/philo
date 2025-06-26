@@ -36,7 +36,7 @@ int	ft_atoi(const char *nptr)
 	}
 	return (r * n);
 }
-static t_info	init_info(char **av)
+t_info	init_info(char **av)
 {
 	t_info	rtn;
 	rtn.num_of_philos = ft_atoi(av[1]);
@@ -44,6 +44,7 @@ static t_info	init_info(char **av)
 	rtn.time_to_eat = ft_atoi(av[3]);
 	rtn.time_to_sleep = ft_atoi(av[4]);
 	rtn.timestamp = get_timestamp();
+	rtn.simulation_flag = 1;
 	if (av[5])
 		rtn.num_of_meals = ft_atoi(av[5]);
 	else
@@ -51,46 +52,42 @@ static t_info	init_info(char **av)
 	return(rtn);
 }
 
-void	initializer(char ** av, t_philo *philos, pthread_mutex_t *forks)
+void	initializer(char **av, t_philo *philos, pthread_mutex_t *forks, t_info *philos_info)
 {
-	int	i;
-
-	i = 0;
-	t_info philos_info;
-	philos_info = init_info(av);
-	while (i < philos_info.num_of_philos)
-	{
-		pthread_mutex_init(&forks[i], NULL);
-		philos[i].id = i + 1;
-		philos[i].is_alive = 1;
-		philos[i].last_meal = -1;
-		philos[i].info = &philos_info;
-		philos[i].r_fork = &forks[i];
-		if (i == 0)
-			philos[i].l_fork = &forks[philos_info.num_of_philos];
-		else
-			philos[i].l_fork = &forks[i - 1];
-		i++;
-	}
+    int	i;
+    
+    *philos_info = init_info(av);
+    
+    pthread_mutex_init(&philos_info->timing_mutex, NULL);
+    
+    i = 0;
+    while (i < philos_info->num_of_philos)
+    {
+        pthread_mutex_init(&forks[i], NULL);
+        philos[i].id = i + 1;
+        philos[i].is_alive = 1;
+        philos[i].last_meal = philos_info->timestamp;
+        philos[i].num_of_meals_eaten = 0;
+        philos[i].info = philos_info;
+        philos[i].r_fork = &forks[i];
+        if (i == 0)
+            philos[i].l_fork = &forks[philos_info->num_of_philos - 1];
+        else
+            philos[i].l_fork = &forks[i - 1];
+        i++;
+    }
 }
 
-void create_threads (t_philo *philo, t_info *info)
+void	create_threads(t_philo *philos, t_info *info)
 {
-	int	i;
-
-	i = 0;
-	while (i < info -> num_of_philos)
-	{
-		if (pthread_create(&philo[i].thread, NULL, routine, &philo[i]) != 0)
-			exit_error("Thread Creating Failed!\n");
-		i++;
-	}
-	i = 0;
-	while (i < info->num_of_philos)
-	{
-		if(pthread_join(philo[i].thread, NULL) != 0)
-			exit_error("Join Failed!\n");
-		i++;
-	}
-
+    int i;
+    
+    i = 0;
+    while (i < info->num_of_philos)
+    {
+        if (pthread_create(&philos[i].thread, NULL, routine, &philos[i]) != 0)
+            exit_error("Thread creation failed\n");
+        i++;
+    }
+    death_monitor(philos);
 }

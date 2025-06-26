@@ -12,37 +12,47 @@
 
 #ifndef PHILO_H
 # define PHILO_H
-# include <stdio.h>
+
 # include <pthread.h>
-# include <unistd.h>
+# include <stdio.h>
 # include <stdlib.h>
+# include <unistd.h>
 # include <sys/time.h>
+
 # define PHILO_MAX 200
+
 typedef struct s_info
 {
-	int		time_to_die;
-	int		time_to_eat;
-	int		time_to_sleep;
-	int		num_of_meals;
-	int		num_of_philos;
-	size_t	timestamp;
+    int				num_of_philos;
+    int				time_to_die;
+    int				time_to_eat;
+    int				time_to_sleep;
+    int				num_of_meals;
+    size_t			timestamp;
+    int				simulation_flag;
+    pthread_mutex_t	timing_mutex;
 }	t_info;
 
 typedef struct s_philo
 {
-	int				id;
-	int				last_meal;
-	int				is_alive;
-	pthread_t		thread;
-	t_info*			info;
-	pthread_mutex_t	*r_fork;
-	pthread_mutex_t	*l_fork;
+    int				id;
+    size_t			last_meal;
+    int				is_alive;
+    int				num_of_meals_eaten;
+    pthread_t		thread;
+    t_info*			info;
+    pthread_mutex_t	*r_fork;
+    pthread_mutex_t	*l_fork;
 }	t_philo;
 
-void	initializer(char ** av, t_philo *philos, pthread_mutex_t *forks);
-void	exit_error(char *msg);
+
+void	exit_error(char *str);
+t_info	init_info(char **av);
+void	initializer(char **av, t_philo *philos, pthread_mutex_t *forks, t_info *philos_info);
+void	create_threads(t_philo *philos, t_info *info);
 void	*routine(void *arg);
-void	create_threads (t_philo *philo, t_info *info);
-void	ft_sleep(unsigned int	sleeping_time);
-size_t	get_timestamp();
+size_t	get_timestamp(void);
+void	death_monitor(t_philo *philos);
+void	ft_usleep(size_t milliseconds);
+
 #endif
